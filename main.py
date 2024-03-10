@@ -11,6 +11,7 @@ O_BOX = pg.image.load("Circles.png")
 
 pg.init()
 pg.font.init()
+pg.display.set_caption("Tic Tac Toe")
 
 class Box(pg.sprite.Sprite):
     def __init__(self, x, y, status="empty"):
@@ -56,8 +57,17 @@ spaces = pg.sprite.Group()
 
 create_grid()
 player_turn = random.choice(["X", "O"])
+
+font = pg.font.Font('freesansbold.ttf', 32)
+text = font.render("It's player " + player_turn + "'s turn.", True, (0,0,0))
+textRect = text.get_rect()
+textRect.centerx = WIDTH//2
+textRect.centery = HEIGHT - 300
+
 running = True
 while running:
+    text = font.render("It's player " + player_turn + "'s turn", True, (0,0,0))
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
@@ -76,6 +86,7 @@ while running:
     
     screen.fill(BG)
     spaces.draw(screen)
+    screen.blit(text, textRect)
     pg.display.flip()
 
 pg.quit()
