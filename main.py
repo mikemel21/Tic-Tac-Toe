@@ -34,11 +34,9 @@ class Box(pg.sprite.Sprite):
             self.status = "O"
 
 board = [[None for _ in range(3)] for _ in range(3)] 
-
-def create_grid ():
+def create_grid():
     x = WIDTH//2 - 100
     y = 150
-    # do we need both the array and the sprite group???
     # add to board 2d array
     for i in range (3):
         for j in range (3):
@@ -47,10 +45,12 @@ def create_grid ():
             x += 100
         x = WIDTH//2 - 100
         y += 100
-    # add to sprite group
-    for r in board:
-        for c in r:
-            spaces.add(c)
+
+def check_grid():
+    for row in board:
+        print (row[0].status)
+
+
 
 screen = pg.display.set_mode([WIDTH, HEIGHT])
 spaces = pg.sprite.Group()
@@ -74,18 +74,23 @@ while running:
 
         if event.type == pg.MOUSEBUTTONDOWN:
             mouseX, mouseY = pg.mouse.get_pos()
-            # check if one of the boxes was clicked
-            for i in spaces:
-                if i.rect.collidepoint(mouseX, mouseY):
-                    i.clicked(player_turn)
-                    # change turn
-                    if i.status == "X":
-                        player_turn = "O"
-                    elif i.status == "O":
-                        player_turn = "X"
+            for row in board:
+                for item in row:
+                    if item.rect.collidepoint(mouseX, mouseY): 
+                        item.clicked(player_turn)
+                        # change turn
+                        if item.status == "X":
+                            player_turn = "O"
+                        elif item.status == "O":
+                            player_turn = "X"
+                        check_grid()
     
     screen.fill(BG)
-    spaces.draw(screen)
+    # draw board
+    for row in board:
+        for i in row:
+            screen.blit(i.image, i.rect)
+    #spaces.draw(screen)
     screen.blit(text, textRect)
     pg.display.flip()
 
