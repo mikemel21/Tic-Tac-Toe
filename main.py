@@ -1,6 +1,7 @@
 import pygame as pg
 from pygame.locals import *
 import random
+import numpy as np
 
 WIDTH, HEIGHT = (900, 900)
 BG = (255, 255, 255)
@@ -14,7 +15,7 @@ pg.font.init()
 pg.display.set_caption("Tic Tac Toe")
 
 class Box(pg.sprite.Sprite):
-    def __init__(self, x, y, status="empty"):
+    def __init__(self, x, y, row, col,  status="empty"):
         super().__init__()
         self.status = status
         self.image = EMPTY_BOX
@@ -22,6 +23,9 @@ class Box(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
+
+        self.row = row
+        self.col = col
 
     def clicked(self, turn):
         if turn == "X" and self.status == "empty":
@@ -33,29 +37,28 @@ class Box(pg.sprite.Sprite):
             self.image = pg.transform.scale(self.image, (100, 100))
             self.status = "O"
 
-board = [[None for _ in range(3)] for _ in range(3)] 
-def create_grid():
-    x = WIDTH//2 - 100
-    y = 150
-    # add to board 2d array
-    for i in range (3):
-        for j in range (3):
-            b = Box(x, y)
-            board[i][j] = b
-            x += 100
-        x = WIDTH//2 - 100
-        y += 100
+x = WIDTH//2 - 100
+y = 150           
+board = np.array([[Box(x + j * 100, y + i * 100, i, j) for j in range(3)] for i in range(3)], dtype=Box)
 
-def check_grid():
-    for row in board:
-        print (row[0].status)
+def check_row (row):
+    val = board[row][0].status
+    for c in board[row]:
+        if c.status != val:
+            return False
+    return True
 
-
+def check_col (col):
+    cols = [board[row][col] for row in range (3)]
+    val = cols[0].status
+    for r in cols:
+        if r.status != val:
+            return False
+    return True
 
 screen = pg.display.set_mode([WIDTH, HEIGHT])
 spaces = pg.sprite.Group()
 
-create_grid()
 player_turn = random.choice(["X", "O"])
 
 font = pg.font.Font('freesansbold.ttf', 32)
@@ -83,8 +86,11 @@ while running:
                             player_turn = "O"
                         elif item.status == "O":
                             player_turn = "X"
-                        check_grid()
-    
+                        if check_row(item.row):
+                            print("yes")
+                        if check_col(item.col):
+                            print("yes col")
+
     screen.fill(BG)
     # draw board
     for row in board:
