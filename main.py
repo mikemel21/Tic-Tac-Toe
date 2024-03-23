@@ -56,6 +56,17 @@ def check_col (col):
             return False
     return True
 
+def check_diags(row, col):
+    val = board[row][col].status
+    x, y = 0, 0
+    while x < 3 and y < 3:
+        cur = board[x][y]
+        if cur.status != val:
+            return False
+        x += 1 
+        y += 1
+    return True
+
 screen = pg.display.set_mode([WIDTH, HEIGHT])
 spaces = pg.sprite.Group()
 
@@ -86,10 +97,14 @@ while running:
                             player_turn = "O"
                         elif item.status == "O":
                             player_turn = "X"
+                        
                         if check_row(item.row):
                             print("yes")
-                        if check_col(item.col):
+                        elif check_col(item.col):
                             print("yes col")
+                        elif check_diags(item.row, item.col):
+                            print("diag win")
+    
 
     screen.fill(BG)
     # draw board
