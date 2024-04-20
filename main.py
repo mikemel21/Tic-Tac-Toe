@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.locals import *
 import random
 import numpy as np
+import time as t
 
 WIDTH, HEIGHT = (900, 900)
 BG = (255, 255, 255)
@@ -41,6 +42,13 @@ x = WIDTH//2 - 100
 y = 150           
 board = np.array([[Box(x + j * 100, y + i * 100, i, j) for j in range(3)] for i in range(3)], dtype=Box)
 
+player_turn = random.choice(["X", "O"])
+font = pg.font.Font('freesansbold.ttf', 32)
+text = font.render("It's player " + player_turn + "'s turn.", True, (0,0,0))
+textRect = text.get_rect()
+textRect.centerx = WIDTH//2
+textRect.centery = HEIGHT - 300
+
 def check_row (row):
     val = board[row][0].status
     for c in board[row]:
@@ -67,17 +75,20 @@ def check_diags(row, col):
         y += 1
     return True
 
+
 screen = pg.display.set_mode([WIDTH, HEIGHT])
 spaces = pg.sprite.Group()
+# def game_won(winner):
+#     font = pg.font.Font('freesansbold.ttf', 32)
+#     win_text = font.render("Player " + winner + " won!", True, (0, 0, 0))
+#     win_textRect = win_text.get_rect()
+#     win_textRect.centerx = WIDTH//2
+#     win_textRect.centery = HEIGHT - 300
+#     screen.blit(win_text, win_textRect)
+#     pg.display.flip()
+#     print("win")
 
-player_turn = random.choice(["X", "O"])
-
-font = pg.font.Font('freesansbold.ttf', 32)
-text = font.render("It's player " + player_turn + "'s turn.", True, (0,0,0))
-textRect = text.get_rect()
-textRect.centerx = WIDTH//2
-textRect.centery = HEIGHT - 300
-
+winner = False
 running = True
 while running:
     text = font.render("It's player " + player_turn + "'s turn", True, (0,0,0))
@@ -90,29 +101,32 @@ while running:
             mouseX, mouseY = pg.mouse.get_pos()
             for row in board:
                 for item in row:
-                    if item.rect.collidepoint(mouseX, mouseY): 
+                    if item.rect.collidepoint(mouseX, mouseY) and winner == False: 
                         item.clicked(player_turn)
                         # change turn
                         if item.status == "X":
                             player_turn = "O"
                         elif item.status == "O":
                             player_turn = "X"
-                        
-                        if check_row(item.row):
-                            print("yes")
-                        elif check_col(item.col):
-                            print("yes col")
-                        elif check_diags(item.row, item.col):
-                            print("diag win")
-    
+
+                        if check_row(item.row) or check_col(item.col) or check_diags(item.row, item.col):
+                            win_text = font.render("Player " + player_turn + " won!", True, (0, 0, 0))
+                            win_textRect = win_text.get_rect()
+                            win_textRect.centerx = WIDTH//2
+                            win_textRect.centery = HEIGHT - 300
+                            # screen.blit(win_text, win_textRect)
+                            winner = True
+                            print("win")
 
     screen.fill(BG)
     # draw board
     for row in board:
         for i in row:
             screen.blit(i.image, i.rect)
-    #spaces.draw(screen)
-    screen.blit(text, textRect)
+    if winner == False:
+        screen.blit(text, textRect)
+    else:
+        screen.blit(win_text, win_textRect)
     pg.display.flip()
 
 pg.quit()
