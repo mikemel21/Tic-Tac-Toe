@@ -78,15 +78,6 @@ def check_diags(row, col):
 
 screen = pg.display.set_mode([WIDTH, HEIGHT])
 spaces = pg.sprite.Group()
-# def game_won(winner):
-#     font = pg.font.Font('freesansbold.ttf', 32)
-#     win_text = font.render("Player " + winner + " won!", True, (0, 0, 0))
-#     win_textRect = win_text.get_rect()
-#     win_textRect.centerx = WIDTH//2
-#     win_textRect.centery = HEIGHT - 300
-#     screen.blit(win_text, win_textRect)
-#     pg.display.flip()
-#     print("win")
 
 winner = False
 running = True
@@ -114,7 +105,6 @@ while running:
                             win_textRect = win_text.get_rect()
                             win_textRect.centerx = WIDTH//2
                             win_textRect.centery = HEIGHT - 300
-                            # screen.blit(win_text, win_textRect)
                             winner = True
                             print("win")
 
